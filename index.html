@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ダサスタ診断 | Dasasuta Check</title>
+    <style>
+        :root {
+            --main-pink: #ffc0cb;
+            --accent-pink: #ff85a2;
+            --soft-blue: #e7f3ff;
+            --text-color: #555;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background: linear-gradient(135deg, #fff5f7 0%, #e7f3ff 100%);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #app {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            width: 85%;
+            max-width: 380px;
+            padding: 2.5rem 1.5rem;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            text-align: center;
+            border: 2px solid var(--white);
+        }
+
+        h1 { 
+            font-size: 1.6rem; 
+            margin-bottom: 0.5rem; 
+            color: var(--accent-pink); 
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .progress { 
+            font-size: 0.75rem; 
+            color: #bbb; 
+            margin-bottom: 2rem; 
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        
+        .question-box {
+            background: var(--white);
+            padding: 25px 15px;
+            border-radius: 25px;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+
+        .question-text {
+            font-size: 1.05rem;
+            font-weight: bold;
+            line-height: 1.6;
+            color: #444;
+            min-height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        button {
+            padding: 16px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-yes { 
+            background: var(--accent-pink); 
+            color: white; 
+            box-shadow: 0 8px 20px rgba(255, 133, 162, 0.3);
+        }
+        
+        .btn-no { 
+            background: var(--white); 
+            color: #aaa; 
+            border: 1px solid #eee;
+        }
+
+        button:active { transform: scale(0.92); }
+
+        #result { display: none; }
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--white);
+            border: 5px solid var(--main-pink);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+        }
+
+        .score-val { font-size: 2.2rem; font-weight: 900; color: var(--accent-pink); }
+        .score-unit { font-size: 0.8rem; color: var(--accent-pink); }
+
+        .rank { font-size: 1.1rem; font-weight: bold; margin: 10px 0; color: #777; }
+        .advice { 
+            background: rgba(255, 255, 255, 0.5);
+            padding: 18px; 
+            border-radius: 20px; 
+            font-size: 0.9rem; 
+            text-align: left; 
+            line-height: 1.6; 
+            color: #666;
+            margin-bottom: 25px;
+        }
+        
+        .line-link-btn {
+            background: #06C755;
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        .line-link-btn span { font-size: 0.7rem; margin-bottom: 2px; }
+
+        .share-btn {
+            margin-top: 20px;
+            background: #000;
+            color: white;
+            width: 100%;
+        }
+
+        .retry-text {
+            margin-top: 25px;
+            display: inline-block;
+            color: #aaa;
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="quiz">
+        <h1>ダサスタ診断</h1>
+        <div class="progress">— QUESTION <span id="current-idx">1</span> / 10 —</div>
+        <div class="question-box">
+            <div class="question-text" id="question-text">読み込み中...</div>
+        </div>
+        <div class="btn-container">
+            <button class="btn-yes" onclick="answer(true)">当てはまる</button>
+            <button class="btn-no" onclick="answer(false)">当てはまらない</button>
+        </div>
+    </div>
+
+    <div id="result">
+        <h1>Result</h1>
+        <div class="score-circle">
+            <div class="score-val" id="score-val">0</div>
+            <div class="score-unit">%</div>
+        </div>
+        <div class="rank" id="rank-text">判定中...</div>
+        <div class="advice" id="advice-text"></div>
+        
+        <button class="line-link-btn" onclick="goToLine()">
+            <span>もっと詳細に診断したい場合はこちら</span>
+            個別アドバイスをもらう💌
+        </button>
+
+        <button class="share-btn" onclick="shareX()">𝕏で結果をシェアする</button>
+        <div class="retry-text" onclick="resetQuiz()">もう一度診断する</div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        "ハイライトの量が米粒🍚",
+        "アイコンやストーリーを真っ黒にして病みアピ",
+        "インスタのアカウントを3個以上持っている",
+        "推し活を過剰に投稿する",
+        "プロフィール欄にMBTIや学校学年クラスが大量",
+        "スタバと謎フィルターを写したストーリー",
+        "ノートでマジギレする",
+        "ハッシュタグで文章作る（例：#これまじで # 本当に #やばい笑）",
+        "面白リールをストーリーで再投稿",
+        "風景やご飯、ドアップの自撮りを投稿"
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    function updateQuestion() {
+        document.getElementById('current-idx').innerText = currentIdx + 1;
+        document.getElementById('question-text').innerText = questions[currentIdx];
+    }
+
+    function answer(isYes) {
+        if (isYes) score += 10;
+        currentIdx++;
+        if (currentIdx < questions.length) {
+            updateQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('score-val').innerText = score;
+
+        let rank = "";
+        let advice = "";
+
+        if (score >= 80) {
+            rank = "【限界】量産おじさん女子💀";
+            advice = "投稿がとにかくダサい…。今のトレンドは「無加工風」と「シンプル」だよ！思い切ってハイライト整理して、世界観リセットしよ？";
+        } else if (score >= 50) {
+            rank = "【微ダサ】意識すぎJK☁️";
+            advice = "映えようとして必死感が出ちゃってるかも。もっと適当に撮った風のほうがオシャレに見えるよ！伸びしろしかないから頑張れ！";
+        } else if (score >= 20) {
+            rank = "【平均】ふつーにオシャレ✨";
+            advice = "いい感じ！でも、みんなと同じすぎて埋もれてるかも。自分だけの「系統」を見つけたらもっと人気が出るはず！";
+        } else {
+            rank = "【神】圧倒的センス担当";
+            advice = "引き算が神。今のインスタを完全に理解してるセンスの塊だよ。むしろアドバイスしてほしいレベル！そのまま突き抜けて。";
+        }
+
+        document.getElementById('rank-text').innerText = rank;
+        document.getElementById('advice-text').innerText = advice;
+    }
+
+    function resetQuiz() {
+        currentIdx = 0;
+        score = 0;
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        updateQuestion();
+        window.scrollTo(0, 0);
+    }
+
+    function shareX() {
+        const text = `【ダサスタ診断】私のダサさは【${score}%】でした！\nランク：${document.getElementById('rank-text').innerText}\n\nみんなもやってみて👇\n@da3asu7agram #ダサスタ診断`;
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+
+    function goToLine() {
+        window.open('https://line.me/R/ti/p/@208yikuw', '_blank');
+    }
+
+    updateQuestion();
+</script>
+
+</body>
+</html>
