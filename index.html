@@ -123,6 +123,25 @@
         .score-unit { font-size: 0.8rem; color: var(--accent-pink); }
 
         .rank { font-size: 1.1rem; font-weight: bold; margin: 10px 0; color: #777; }
+        
+        /* 広告用スタイル */
+        .ad-area {
+            margin: 15px 0;
+            padding: 5px;
+            background: #fff;
+            border-radius: 10px;
+        }
+        .ad-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .ad-caption {
+            font-size: 8px;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+
         .advice { 
             background: rgba(255, 255, 255, 0.5);
             padding: 18px; 
@@ -184,6 +203,14 @@
             <div class="score-unit">%</div>
         </div>
         <div class="rank" id="rank-text">判定中...</div>
+
+        <div class="ad-area">
+            <div class="ad-caption">SPONSORED</div>
+            <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+F8C8XE+0K+11B0RL" rel="nofollow">
+            <img border="0" width="728" height="90" alt="" src="https://www27.a8.net/svt/bgt?aid=260116569921&wid=001&eno=01&mid=s00000000002006266000&mc=1"></a>
+            <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4AV789+F8C8XE+0K+11B0RL" alt="">
+        </div>
+
         <div class="advice" id="advice-text"></div>
         
         <button class="line-link-btn" onclick="goToLine()">
