@@ -45,6 +45,24 @@
             letter-spacing: -1px;
         }
 
+        /* ロゴ画像のスタイル */
+        .logo-img {
+            width: 200px; /* サイズを少し大きくしました */
+            height: auto;
+            border-radius: 20px;
+            margin: 10px auto 20px;
+            display: block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .start-description {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #777;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
         .progress { 
             font-size: 0.75rem; 
             color: #bbb; 
@@ -91,7 +109,7 @@
             justify-content: center;
         }
 
-        .btn-yes { 
+        .btn-yes, .btn-start { 
             background: var(--accent-pink); 
             color: white; 
             box-shadow: 0 8px 20px rgba(255, 133, 162, 0.3);
@@ -105,26 +123,8 @@
 
         button:active { transform: scale(0.92); }
 
-        #result { display: none; }
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--white);
-            border: 5px solid var(--main-pink);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto 20px;
-        }
+        #quiz, #result { display: none; }
 
-        .score-val { font-size: 2.2rem; font-weight: 900; color: var(--accent-pink); }
-        .score-unit { font-size: 0.8rem; color: var(--accent-pink); }
-
-        .rank { font-size: 1.1rem; font-weight: bold; margin: 10px 0; color: #777; }
-        
-        /* 広告エリアのスタイル */
         .ad-area {
             margin: 15px 0;
             padding: 10px;
@@ -135,16 +135,8 @@
             align-items: center;
             gap: 10px;
         }
-        .ad-area img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-        .ad-caption {
-            font-size: 8px;
-            color: #ccc;
-            margin-bottom: -5px;
-        }
+        .ad-area img { max-width: 100%; height: auto; border-radius: 5px; }
+        .ad-caption { font-size: 8px; color: #ccc; margin-bottom: -5px; }
 
         .advice { 
             background: rgba(255, 255, 255, 0.5);
@@ -188,6 +180,16 @@
 <body>
 
 <div id="app">
+    <div id="start-screen">
+        <h1>ダサスタ診断</h1>
+        <img src="logo.png" class="logo-img" alt="ダサスタ診断ロゴ">
+        <p class="start-description">
+            あなたのインスタ、実は「ダサい」って思われてない？<br>
+            偏差値をガチ診断して、オシャレ女子を目指そう🎀
+        </p>
+        <button class="btn-start" onclick="startQuiz()">診断を始める</button>
+    </div>
+
     <div id="quiz">
         <h1>ダサスタ診断</h1>
         <div class="progress">— QUESTION <span id="current-idx">1</span> / 10 —</div>
@@ -210,18 +212,12 @@
 
         <div class="ad-area">
             <div class="ad-caption">SPONSORED</div>
-            
             <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+F8C8XE+0K+11B0RL" rel="nofollow">
-            <img border="0" width="728" height="90" alt="" src="https://www27.a8.net/svt/bgt?aid=260116569921&wid=001&eno=01&mid=s00000000002006266000&mc=1"></a>
-            <img border="0" width="1" height="1" src="https://www19.a8.net/0.gif?a8mat=4AV789+F8C8XE+0K+11B0RL" alt="">
-
+            <img border="0" width="728" height="90" src="https://www27.a8.net/svt/bgt?aid=260116569921&wid=001&eno=01&mid=s00000000002006266000&mc=1"></a>
             <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+F8XOJ6+1WP2+6HES1" rel="nofollow">
-            <img border="0" width="100" height="100" alt="" src="https://www27.a8.net/svt/bgt?aid=260116569922&wid=001&eno=01&mid=s00000008903001089000&mc=1"></a>
-            <img border="0" width="1" height="1" src="https://www18.a8.net/0.gif?a8mat=4AV789+F8XOJ6+1WP2+6HES1" alt="">
-
+            <img border="0" width="100" height="100" src="https://www27.a8.net/svt/bgt?aid=260116569922&wid=001&eno=01&mid=s00000008903001089000&mc=1"></a>
             <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+FA4JQQ+50+2HV61T" rel="nofollow">
-            <img border="0" width="728" height="90" alt="" src="https://www20.a8.net/svt/bgt?aid=260116569924&wid=001&eno=01&mid=s00000000018015094000&mc=1"></a>
-            <img border="0" width="1" height="1" src="https://www13.a8.net/0.gif?a8mat=4AV789+FA4JQQ+50+2HV61T" alt="">
+            <img border="0" width="728" height="90" src="https://www20.a8.net/svt/bgt?aid=260116569924&wid=001&eno=01&mid=s00000000018015094000&mc=1"></a>
         </div>
 
         <div class="advice" id="advice-text"></div>
@@ -252,6 +248,12 @@
 
     let currentIdx = 0;
     let score = 0;
+
+    function startQuiz() {
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        updateQuestion();
+    }
 
     function updateQuestion() {
         document.getElementById('current-idx').innerText = currentIdx + 1;
@@ -298,8 +300,7 @@
         currentIdx = 0;
         score = 0;
         document.getElementById('result').style.display = 'none';
-        document.getElementById('quiz').style.display = 'block';
-        updateQuestion();
+        document.getElementById('start-screen').style.display = 'block';
         window.scrollTo(0, 0);
     }
 
@@ -312,8 +313,6 @@
     function goToLine() {
         window.open('https://line.me/R/ti/p/@208yikuw', '_blank');
     }
-
-    updateQuestion();
 </script>
 
 </body>
