@@ -26,7 +26,6 @@
             border: 4px solid #ffffff; position: relative; overflow-y: auto;
         }
 
-        /* 偏差値円グラフ */
         .chart-container { position: relative; width: 140px; height: 140px; margin: 5px auto; display: flex; align-items: center; justify-content: center; }
         .circular-chart { width: 100%; height: 100%; transform: rotate(-90deg); }
         .circle-bg { fill: none; stroke: #f2f2f2; stroke-width: 3; }
@@ -34,7 +33,6 @@
         .hen-box { position: absolute; text-align: center; }
         .hen-val { font-size: 3.2rem; font-weight: 900; color: var(--soft-pink); line-height: 1; }
 
-        /* ステータスバー */
         .status-row { margin: 12px 0; text-align: left; width: 100%; }
         .status-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 900; color: #555; margin-bottom: 4px; }
         .status-bar-bg { width: 100%; height: 20px; background: #f0f2f5; border-radius: 20px; overflow: hidden; border: 1.5px solid #fff; }
@@ -45,9 +43,7 @@
         button { border: none; border-radius: 30px; font-weight: 900; cursor: pointer; transition: 0.3s; width: 100%; }
         .btn-gradient { background: var(--grad-pink); color: white; padding: 18px; font-size: 1.1rem; }
 
-        /* 画面切り替え用 */
         #quiz, #loading, #result { display: none; width: 100%; }
-        
         input[type=range] { -webkit-appearance: none; width: 100%; height: 10px; background: #eee; border-radius: 10px; margin: 25px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; background: var(--soft-pink); border-radius: 50%; border: 3px solid #fff; }
         
@@ -117,18 +113,16 @@
                 </div>
             </a>
 
-            <a id="share-x-link" href="#" target="_blank" style="background: #000; color: #fff; padding: 12px; border-radius: 50px; text-align: center; font-weight: 900; font-size: 1rem; cursor: pointer; display: block; text-decoration: none;">
+            <a id="share-x-link" href="https://x.com/da3asu7agram" target="_blank" style="background: #000; color: #fff; padding: 12px; border-radius: 50px; text-align: center; font-weight: 900; font-size: 1rem; cursor: pointer; display: block; text-decoration: none;">
                 Share X
             </a>
         </div>
 
-        <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
-
-        <div id="ad-area" style="width:100%; min-height:100px; display:block; margin: 20px 0;">
+        <div style="margin-top: 20px; width: 100%; text-align: center;">
             <script src="https://adm.shinobi.jp/s/ffc49deba048d77c8f1240c87d09a5bd"></script>
             </div>
 
-        <button onclick="location.reload()" style="background:none; color: #bbb; margin: 20px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px; display: block; width: 100%;">RETRY</button>
+        <button onclick="location.reload()" style="background:none; color: #bbb; margin-top: 25px; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px;">RETRY</button>
     </div>
 </div>
 
@@ -158,11 +152,7 @@
 
     let current = 0; let score = 0;
 
-    function startQuiz() { 
-        document.getElementById('start-screen').style.display = 'none'; 
-        document.getElementById('quiz').style.display = 'block'; 
-        renderQuestion(); 
-    }
+    function startQuiz() { document.getElementById('start-screen').style.display = 'none'; document.getElementById('quiz').style.display = 'block'; renderQuestion(); }
 
     function renderQuestion() {
         const q = quizData[current];
@@ -181,11 +171,7 @@
     function next(pts) {
         score += pts; current++;
         if (current < quizData.length) { renderQuestion(); } 
-        else { 
-            document.getElementById('quiz').style.display = 'none'; 
-            document.getElementById('loading').style.display = 'block'; 
-            setTimeout(showResult, 2000); 
-        }
+        else { document.getElementById('quiz').style.display = 'none'; document.getElementById('loading').style.display = 'block'; setTimeout(showResult, 2000); }
     }
 
     function nextSlider() { score += (document.getElementById('sd').value / 5); next(0); }
