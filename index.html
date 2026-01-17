@@ -26,7 +26,6 @@
             border: 4px solid #ffffff; position: relative; overflow-y: auto;
         }
 
-        /* 偏差値円グラフ */
         .chart-container { position: relative; width: 140px; height: 140px; margin: 5px auto; display: flex; align-items: center; justify-content: center; }
         .circular-chart { width: 100%; height: 100%; transform: rotate(-90deg); }
         .circle-bg { fill: none; stroke: #f2f2f2; stroke-width: 3; }
@@ -34,7 +33,6 @@
         .hen-box { position: absolute; text-align: center; }
         .hen-val { font-size: 3.2rem; font-weight: 900; color: var(--soft-pink); line-height: 1; }
 
-        /* ステータスバー */
         .status-row { margin: 12px 0; text-align: left; width: 100%; }
         .status-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 900; color: #555; margin-bottom: 4px; }
         .status-bar-bg { width: 100%; height: 20px; background: #f0f2f5; border-radius: 20px; overflow: hidden; border: 1.5px solid #fff; }
@@ -103,11 +101,7 @@
             <span id="match-val" style="font-size:0.95rem; font-weight:900;">---</span>
         </div>
 
-        <div style="margin: 20px 0;">
-            <script src="https://adm.shinobi.jp/s/ffc49deba048d77c8f1240c87d09a5bd"></script>
-            </div>
-
-        <div style="width: 100%; background: #ffffff; border-radius: 25px; padding: 20px; border: 2px solid #7ecc49; box-sizing: border-box; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.03);">
+        <div style="width: 100%; background: #ffffff; border-radius: 25px; padding: 20px; margin-top: 20px; border: 2px solid #7ecc49; box-sizing: border-box; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.03);">
             <div style="font-size: 1.1rem; font-weight: 900; color: #000; line-height: 1.4; margin-bottom: 15px;">
                 LINEで診断してる<br>限定の<span style="color: #ff3366;">垢抜け方法</span>もGET！
             </div>
@@ -125,11 +119,16 @@
             </a>
         </div>
 
-        <button onclick="location.reload()" style="background:none; color: #bbb; margin-top: 25px; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px;">RETRY</button>
+        <div style="margin: 25px 0;">
+            <script src="https://adm.shinobi.jp/s/ffc49deba048d77c8f1240c87d09a5bd"></script>
+            </div>
+
+        <button onclick="location.reload()" style="background:none; color: #bbb; margin-top: 10px; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px;">RETRY</button>
     </div>
 </div>
 
 <script>
+    // 以前と同じクイズロジック
     const quizData = [
         { type: "choice", q: "ストーリーを投稿する頻度は？", c: ["1日3回以上", "1日1〜2回", "週1回", "ほぼ投稿しない"], s: [20, 5, 0, 0] },
         { type: "dual", q: "ハイライトに「自分の名前」を入れてる？", s: 15 },
@@ -152,50 +151,28 @@
         { type: "dual", q: "鏡越しの自撮りをよく載せる？", s: 10 },
         { type: "slider", q: "ぶっちゃけ、垢抜けたいと思ってる？", s: 1 }
     ];
-
     let current = 0; let score = 0;
-
     function startQuiz() { document.getElementById('start-screen').style.display = 'none'; document.getElementById('quiz').style.display = 'block'; renderQuestion(); }
-
     function renderQuestion() {
-        const q = quizData[current];
-        const area = document.getElementById('q-content');
-        document.getElementById('current-step').innerText = String(current + 1).padStart(2, '0');
+        const q = quizData[current]; const area = document.getElementById('q-content'); document.getElementById('current-step').innerText = String(current + 1).padStart(2, '0');
         area.innerHTML = `<div style="font-size:1.3rem; font-weight:900; margin-bottom:25px;">${q.q}</div>`;
-        if (q.type === "choice") {
-            q.c.forEach((choice, i) => { area.innerHTML += `<button style="background:#fff; color:#666; padding:16px; margin-bottom:10px; text-align:left; border:1px solid #eee;" onclick="next(${q.s[i]})">${choice}</button>`; });
-        } else if (q.type === "dual") {
-            area.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"><button class="btn-gradient" onclick="next(${q.s || 0})">はい</button><button style="background:#fff; color:#aaa; border:1px solid #eee; border-radius:30px;" onclick="next(${q.ns || 0})">いいえ</button></div>`;
-        } else if (q.type === "slider") {
-            area.innerHTML += `<input type="range" id="sd" min="0" max="100" value="50" oninput="document.getElementById('sv').innerText = this.value + '%'"><div id="sv" style="font-size:3rem; font-weight:900; color:var(--soft-pink); margin-bottom:20px;">50%</div><button class="btn-gradient" onclick="nextSlider()">確定</button>`;
-        }
+        if (q.type === "choice") { q.c.forEach((choice, i) => { area.innerHTML += `<button style="background:#fff; color:#666; padding:16px; margin-bottom:10px; text-align:left; border:1px solid #eee;" onclick="next(${q.s[i]})">${choice}</button>`; }); }
+        else if (q.type === "dual") { area.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"><button class="btn-gradient" onclick="next(${q.s || 0})">はい</button><button style="background:#fff; color:#aaa; border:1px solid #eee; border-radius:30px;" onclick="next(${q.ns || 0})">いいえ</button></div>`; }
+        else if (q.type === "slider") { area.innerHTML += `<input type="range" id="sd" min="0" max="100" value="50" oninput="document.getElementById('sv').innerText = this.value + '%'"><div id="sv" style="font-size:3rem; font-weight:900; color:var(--soft-pink); margin-bottom:20px;">50%</div><button class="btn-gradient" onclick="nextSlider()">確定</button>`; }
     }
-
-    function next(pts) {
-        score += pts; current++;
-        if (current < quizData.length) { renderQuestion(); } 
-        else { document.getElementById('quiz').style.display = 'none'; document.getElementById('loading').style.display = 'block'; setTimeout(showResult, 2000); }
-    }
-
+    function next(pts) { score += pts; current++; if (current < quizData.length) { renderQuestion(); } else { document.getElementById('quiz').style.display = 'none'; document.getElementById('loading').style.display = 'block'; setTimeout(showResult, 2000); } }
     function nextSlider() { score += (document.getElementById('sd').value / 5); next(0); }
-
     function showResult() {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('result').style.display = 'block';
+        document.getElementById('loading').style.display = 'none'; document.getElementById('result').style.display = 'block';
         let rank, hen, s1, s2, s3, match;
         if (score >= 200) { rank = "量産おじさん女子💀"; hen = 34; s1 = 12; s2 = 95; s3 = 10; match = "メガネ系男子"; }
         else if (score >= 130) { rank = "自意識高すぎJK☁️"; hen = 47; s1 = 42; s2 = 78; s3 = 45; match = "スポーツ系男子"; }
         else if (score >= 70) { rank = "ふつーにオシャレ✨"; hen = 64; s1 = 78; s2 = 28; s3 = 82; match = "高校生モデル"; }
         else { rank = "圧倒的センス担当💎"; hen = 82; s1 = 98; s2 = 4; s3 = 99; match = "若手俳優"; }
-        
-        document.getElementById('hen-val').innerText = hen;
-        document.getElementById('rank-tag').innerText = rank;
-        document.getElementById('match-val').innerText = match;
+        document.getElementById('hen-val').innerText = hen; document.getElementById('rank-tag').innerText = rank; document.getElementById('match-val').innerText = match;
         document.getElementById('circle-path').setAttribute('stroke-dasharray', `${hen}, 100`);
-        
         const shareText = encodeURIComponent(`私のインスタ偏差値は【${hen}】でした！ランクは「${rank}」✨\n#ダサスタ診断 #インスタ診断`);
         document.getElementById('share-x-link').href = `https://twitter.com/intent/tweet?text=${shareText}&url=https://x.com/da3asu7agram`;
-
         setTimeout(() => {
             document.getElementById('br-1').style.width = s1 + "%"; document.getElementById('lb-1').innerText = s1 + "%";
             document.getElementById('br-2').style.width = s2 + "%"; document.getElementById('lb-2').innerText = s2 + "%";
@@ -205,4 +182,3 @@
 </script>
 </body>
 </html>
-
