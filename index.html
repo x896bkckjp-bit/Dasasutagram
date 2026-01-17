@@ -108,26 +108,26 @@
                 LINEで診断してる<br>限定の<span style="color: #ff3366;">垢抜け方法</span>もGET！
             </div>
             
-            <div style="background: #06C755; color: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-weight: 900; margin-bottom: 12px;">
+            <a href="https://line.me/R/ti/p/@208yikuw" style="background: #06C755; color: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-weight: 900; margin-bottom: 12px;">
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" width="22">
                     <span>LINE</span>
                 </div>
                 <span style="font-size: 0.7rem; opacity: 0.8;"></span>
-            </div>
+            </a>
 
-            <div style="background: #000; color: #fff; padding: 12px; border-radius: 50px; text-align: center; font-weight: 900; font-size: 1rem; cursor: pointer;">
+            <a id="share-x-link" href="https://x.com/da3asu7agram" target="_blank" style="background: #000; color: #fff; padding: 12px; border-radius: 50px; text-align: center; font-weight: 900; font-size: 1rem; cursor: pointer; display: block; text-decoration: none;">
                 Share X
-            </div>
+            </a>
         </div>
 
-        <button onclick="location.reload()" style="background:none; color: #ddd; margin-top: 15px; font-size: 0.7rem;">RETRY</button>
+        <button onclick="location.reload()" style="background:none; color: #bbb; margin-top: 25px; font-size: 1.2rem; font-weight: 900; letter-spacing: 2px;">RETRY</button>
     </div>
 </div>
 
 <script>
     const quizData = [
-        { type: "choice", q: "ストーリーを投稿する頻度は？", c: ["1日5回以上", "1日1〜2回", "2〜3日に1回", "ほぼ投稿しない"], s: [20, 5, 0, 0] },
+        { type: "choice", q: "ストーリーを投稿する頻度は？", c: ["1日3回以上", "1日1〜2回", "週1回", "ほぼ投稿しない"], s: [20, 5, 0, 0] },
         { type: "dual", q: "ハイライトに「自分の名前」を入れてる？", s: 15 },
         { type: "slider", q: "投稿の「映え」へのこだわり度は？", s: 1 },
         { type: "choice", q: "一番よく使うフィルターは？", c: ["キラキラ系", "無加工風", "暗め・モノクロ", "ピンク系"], s: [15, 0, 5, 10] },
@@ -189,7 +189,10 @@
         document.getElementById('match-val').innerText = match;
         document.getElementById('circle-path').setAttribute('stroke-dasharray', `${hen}, 100`);
         
-        // 0.1秒待ってからバーを伸ばすアニメーション（確実に見せるため）
+        // Xシェア用のリンクを生成
+        const shareText = encodeURIComponent(`私のインスタ偏差値は【${hen}】でした！ランクは「${rank}」✨\n#ダサスタ診断 #インスタ診断`);
+        document.getElementById('share-x-link').href = `https://twitter.com/intent/tweet?text=${shareText}&url=https://x.com/da3asu7agram`;
+
         setTimeout(() => {
             document.getElementById('br-1').style.width = s1 + "%"; document.getElementById('lb-1').innerText = s1 + "%";
             document.getElementById('br-2').style.width = s2 + "%"; document.getElementById('lb-2').innerText = s2 + "%";
@@ -198,3 +201,4 @@
     }
 </script>
 </body>
+</html>
