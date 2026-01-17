@@ -3,317 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ダサスタ診断 | Dasasuta Check</title>
+    <title>ダサスタ診断 PREMIUM</title>
     <style>
         :root {
-            --main-pink: #ffc0cb;
-            --accent-pink: #ff85a2;
-            --soft-blue: #e7f3ff;
-            --text-color: #555;
-            --white: #ffffff;
+            --soft-pink: #ff8fa3;
+            --grad-pink: linear-gradient(90deg, #ffafbd, #ff8fa3);
+            --text-main: #4a4a4a;
         }
 
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            background: linear-gradient(135deg, #fff5f7 0%, #e7f3ff 100%);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            margin: 0; font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+            background: linear-gradient(135deg, #ffdee9 0%, #b5fffc 100%);
+            color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
 
         #app {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            width: 85%;
-            max-width: 380px;
-            padding: 2.5rem 1.5rem;
-            border-radius: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            text-align: center;
-            border: 2px solid var(--white);
+            width: 92%; max-width: 420px; height: 92vh;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px); border-radius: 45px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box;
+            border: 4px solid #ffffff; position: relative; overflow-y: auto;
         }
 
-        h1 { 
-            font-size: 1.6rem; 
-            margin-bottom: 0.5rem; 
-            color: var(--accent-pink); 
-            font-weight: 800;
-            letter-spacing: -1px;
-        }
+        /* 偏差値円グラフ */
+        .chart-container { position: relative; width: 140px; height: 140px; margin: 5px auto; display: flex; align-items: center; justify-content: center; }
+        .circular-chart { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .circle-bg { fill: none; stroke: #f2f2f2; stroke-width: 3; }
+        .circle { fill: none; stroke: var(--soft-pink); stroke-width: 3; stroke-linecap: round; transition: stroke-dasharray 1.8s ease; }
+        .hen-box { position: absolute; text-align: center; }
+        .hen-val { font-size: 3.2rem; font-weight: 900; color: var(--soft-pink); line-height: 1; }
 
-        /* ロゴ画像のスタイル */
-        .logo-img {
-            width: 220px;
-            height: auto;
-            border-radius: 20px;
-            margin: 10px auto 20px;
-            display: block;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+        /* ステータスバー */
+        .status-row { margin: 12px 0; text-align: left; width: 100%; }
+        .status-label { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 900; color: #555; margin-bottom: 4px; }
+        .status-bar-bg { width: 100%; height: 20px; background: #f0f2f5; border-radius: 20px; overflow: hidden; border: 1.5px solid #fff; }
+        .status-bar-fill { height: 100%; width: 0%; background: var(--grad-pink); transition: 2s cubic-bezier(0.1, 1, 0.1, 1); }
 
-        .start-description {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #777;
-            margin-bottom: 30px;
-            padding: 0 10px;
-        }
-
-        .progress { 
-            font-size: 0.75rem; 
-            color: #bbb; 
-            margin-bottom: 2rem; 
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+        .match-box { background: #fff8f9; border-radius: 15px; padding: 8px; border: 1px solid #ffeef0; width: 100%; box-sizing: border-box; margin-top: 5px; }
         
-        .question-box {
-            background: var(--white);
-            padding: 25px 15px;
-            border-radius: 25px;
-            margin-bottom: 2rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
-        }
+        button { border: none; border-radius: 30px; font-weight: 900; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-gradient { background: var(--grad-pink); color: white; padding: 18px; font-size: 1.1rem; }
 
-        .question-text {
-            font-size: 1.05rem;
-            font-weight: bold;
-            line-height: 1.6;
-            color: #444;
-            min-height: 3.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        button {
-            padding: 16px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-yes, .btn-start { 
-            background: var(--accent-pink); 
-            color: white; 
-            box-shadow: 0 8px 20px rgba(255, 133, 162, 0.3);
-        }
+        #quiz, #loading, #result { display: none; width: 100%; }
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 10px; background: #eee; border-radius: 10px; margin: 25px 0; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; background: var(--soft-pink); border-radius: 50%; border: 3px solid #fff; }
         
-        .btn-no { 
-            background: var(--white); 
-            color: #aaa; 
-            border: 1px solid #eee;
-        }
-
-        button:active { transform: scale(0.92); }
-
-        #quiz, #result { display: none; }
-
-        .ad-area {
-            margin: 15px 0;
-            padding: 10px;
-            background: #fff;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .ad-area img { max-width: 100%; height: auto; border-radius: 5px; }
-        .ad-caption { font-size: 8px; color: #ccc; margin-bottom: -5px; }
-
-        .advice { 
-            background: rgba(255, 255, 255, 0.5);
-            padding: 18px; 
-            border-radius: 20px; 
-            font-size: 0.9rem; 
-            text-align: left; 
-            line-height: 1.6; 
-            color: #666;
-            margin-bottom: 25px;
-        }
-        
-        .line-link-btn {
-            background: #06C755;
-            color: white;
-            width: 100%;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-        .line-link-btn span { font-size: 0.7rem; margin-bottom: 2px; }
-
-        .share-btn {
-            margin-top: 20px;
-            background: #000;
-            color: white;
-            width: 100%;
-        }
-
-        .retry-text {
-            margin-top: 25px;
-            display: inline-block;
-            color: #aaa;
-            font-size: 0.85rem;
-            text-decoration: underline;
-            cursor: pointer;
-            padding-bottom: 10px;
-        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div id="start-screen">
-        <h1>ダサスタ診断</h1>
-        <img src="IMG_5115.jpeg" class="logo-img" alt="ダサスタ診断ロゴ">
-        <p class="start-description">
-            あなたのインスタ、実は「ダサい」って思われてない？<br>
-            どこがダサいか診断して、オシャレ女子を目指そう🎀
-        </p>
-        <button class="btn-start" onclick="startQuiz()">診断を始める</button>
+    <div id="start-screen" style="text-align:center;">
+        <h1 style="margin-top:20px; color: var(--soft-pink);">ダサスタ診断 🎀</h1>
+        <img src="IMG_5115.jpeg" style="width:130px; border-radius:40px; margin:20px 0; border:4px solid #fff;">
+        <button class="btn-gradient" onclick="startQuiz()" style="margin-top:25px;">診断を開始する</button>
     </div>
 
-    <div id="quiz">
-        <h1>ダサスタ診断</h1>
-        <div class="progress">— QUESTION <span id="current-idx">1</span> / 10 —</div>
-        <div class="question-box">
-            <div class="question-text" id="question-text">読み込み中...</div>
-        </div>
-        <div class="btn-container">
-            <button class="btn-yes" onclick="answer(true)">当てはまる</button>
-            <button class="btn-no" onclick="answer(false)">当てはまらない</button>
-        </div>
+    <div id="quiz" style="text-align:center;">
+        <div id="q-idx" style="font-size:0.8rem; color:var(--soft-pink); font-weight:bold; margin-bottom:20px;">STEP <span id="current-step">01</span>/20</div>
+        <div id="q-content"></div>
     </div>
 
-    <div id="result">
-        <h1>Result</h1>
-        <div class="score-circle">
-            <div class="score-val" id="score-val">0</div>
-            <div class="score-unit">%</div>
+    <div id="loading" style="text-align:center; padding-top:120px;">
+        <div style="font-size:3rem; animation: pulse 1.5s infinite;">🌸</div>
+        <h2 style="color:var(--soft-pink);">分析中...</h2>
+    </div>
+
+    <div id="result" style="text-align:center;">
+        <div class="chart-container">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                <path id="circle-path" class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+            </svg>
+            <div class="hen-box">
+                <span style="font-size:0.7rem; font-weight:900; color:#ccc; display:block;">偏差値</span>
+                <span class="hen-val" id="hen-val">--</span>
+            </div>
         </div>
-        <div class="rank" id="rank-text">判定中...</div>
 
-        <div class="ad-area">
-            <div class="ad-caption">SPONSORED</div>
-            <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+F8C8XE+0K+11B0RL" rel="nofollow">
-            <img border="0" width="728" height="90" src="https://www27.a8.net/svt/bgt?aid=260116569921&wid=001&eno=01&mid=s00000000002006266000&mc=1"></a>
-            <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+F8XOJ6+1WP2+6HES1" rel="nofollow">
-            <img border="0" width="100" height="100" src="https://www27.a8.net/svt/bgt?aid=260116569922&wid=001&eno=01&mid=s00000008903001089000&mc=1"></a>
-            <a href="https://px.a8.net/svt/ejp?a8mat=4AV789+FA4JQQ+50+2HV61T" rel="nofollow">
-            <img border="0" width="728" height="90" src="https://www20.a8.net/svt/bgt?aid=260116569924&wid=001&eno=01&mid=s00000000018015094000&mc=1"></a>
+        <div id="rank-tag" style="background:var(--grad-pink); color:#fff; padding:5px 20px; border-radius:50px; font-weight:900; margin-bottom:10px; display:inline-block; font-size:0.9rem;">---</div>
+
+        <div class="status-row">
+            <div class="status-label"><span>✨ オシャレ・映え度</span><span id="lb-1">0%</span></div>
+            <div class="status-bar-bg"><div id="br-1" class="status-bar-fill"></div></div>
+        </div>
+        <div class="status-row">
+            <div class="status-label"><span>☁️ 自意識</span><span id="lb-2">0%</span></div>
+            <div class="status-bar-bg"><div id="br-2" class="status-bar-fill"></div></div>
+        </div>
+        <div class="status-row">
+            <div class="status-label"><span>💎 垢抜け期待値</span><span id="lb-3">0%</span></div>
+            <div class="status-bar-bg"><div id="br-3" class="status-bar-fill"></div></div>
         </div>
 
-        <div class="advice" id="advice-text"></div>
-        
-        <button class="line-link-btn" onclick="goToLine()">
-            <span>もっと詳細に診断したい場合はこちら</span>
-            個別アドバイスをもらう💌
-        </button>
+        <div class="match-box">
+            <span style="font-size:0.75rem; color:var(--soft-pink); font-weight:bold;">💘 相性の良いタイプ: </span>
+            <span id="match-val" style="font-size:0.95rem; font-weight:900;">---</span>
+        </div>
 
-        <button class="share-btn" onclick="shareX()">𝕏で結果をシェアする</button>
-        <div class="retry-text" onclick="resetQuiz()">もう一度診断する</div>
+        <div style="width: 100%; background: #ffffff; border-radius: 25px; padding: 20px; margin-top: 20px; border: 2px solid #7ecc49; box-sizing: border-box; text-align: left; box-shadow: 0 10px 25px rgba(0,0,0,0.03);">
+            <div style="font-size: 1.1rem; font-weight: 900; color: #000; line-height: 1.4; margin-bottom: 15px;">
+                LINEで診断してる<br>限定の<span style="color: #ff3366;">垢抜け方法</span>もGET！
+            </div>
+            
+            <div style="background: #06C755; color: white; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; font-weight: 900; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" width="22">
+                    <span>LINE</span>
+                </div>
+                <span style="font-size: 0.7rem; opacity: 0.8;"></span>
+            </div>
+
+            <div style="background: #000; color: #fff; padding: 12px; border-radius: 50px; text-align: center; font-weight: 900; font-size: 1rem; cursor: pointer;">
+                Share X
+            </div>
+        </div>
+
+        <button onclick="location.reload()" style="background:none; color: #ddd; margin-top: 15px; font-size: 0.7rem;">RETRY</button>
     </div>
 </div>
 
 <script>
-    const questions = [
-        "ハイライトの量が米粒🍚",
-        "アイコンやストーリーを真っ黒にして病みアピ",
-        "インスタのアカウントを3個以上持っている",
-        "推し活を過剰に投稿する",
-        "プロフィール欄にMBTIや学校学年クラスが大量",
-        "スタバと謎フィルターを写したストーリー",
-        "ノートでマジギレする",
-        "ハッシュタグで文章作る（例：#これまじで # 本当に #やばい笑）",
-        "面白リールをストーリーで再投稿",
-        "風景やご飯、ドアップの自撮りを投稿"
+    const quizData = [
+        { type: "choice", q: "ストーリーを投稿する頻度は？", c: ["1日5回以上", "1日1〜2回", "2〜3日に1回", "ほぼ投稿しない"], s: [20, 5, 0, 0] },
+        { type: "dual", q: "ハイライトに「自分の名前」を入れてる？", s: 15 },
+        { type: "slider", q: "投稿の「映え」へのこだわり度は？", s: 1 },
+        { type: "choice", q: "一番よく使うフィルターは？", c: ["キラキラ系", "無加工風", "暗め・モノクロ", "ピンク系"], s: [15, 0, 5, 10] },
+        { type: "dual", q: "プロフィールのアイコンは「他撮り」？", s: 0, ns: 10 },
+        { type: "slider", q: "ぶっちゃけ、フォロワー数は気になる？", s: 1 },
+        { type: "choice", q: "ハッシュタグの数は平均いくつ？", c: ["なし・1個", "2〜5個", "10個以上", "コメント欄に書く"], s: [0, 5, 15, 10] },
+        { type: "dual", q: "ストーリーで「親しい友達」を多用する？", s: 10 },
+        { type: "choice", q: "カフェで写真を撮る時、意識するのは？", c: ["食べ物のアップ", "引きの空間", "持っている自分", "撮らない"], s: [10, 0, 15, 0] },
+        { type: "slider", q: "通知が来るとすぐチェックしちゃう？", s: 1 },
+        { type: "dual", q: "プロフィールにMBTIを書いてる？", s: 15 },
+        { type: "choice", q: "加工アプリ、何個使ってる？", c: ["1個だけ", "2〜3個", "5個以上", "インスタ内のみ"], s: [0, 5, 15, 0] },
+        { type: "dual", q: "夜中に病みストーリーを上げたことがある？", s: 20 },
+        { type: "slider", q: "他人の投稿を見て「ダサい」と思うことは？", s: 1 },
+        { type: "choice", q: "自分の投稿の統一感は？", c: ["完璧に揃えてる", "なんとなく意識", "バラバラ", "気にしたことない"], s: [15, 0, 10, 5] },
+        { type: "dual", q: "リールより静止画（フィード）派？", s: 0, ns: 5 },
+        { type: "slider", q: "リア友以外のフォロワーが多い？", s: 1 },
+        { type: "choice", q: "ストーリーの文字サイズは？", c: ["めちゃデカい", "普通", "米粒くらい小さい", "背景透過"], s: [15, 5, 10, 0] },
+        { type: "dual", q: "鏡越しの自撮りをよく載せる？", s: 10 },
+        { type: "slider", q: "ぶっちゃけ、垢抜けたいと思ってる？", s: 1 }
     ];
 
-    let currentIdx = 0;
-    let score = 0;
+    let current = 0; let score = 0;
 
-    function startQuiz() {
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('quiz').style.display = 'block';
-        updateQuestion();
-    }
+    function startQuiz() { document.getElementById('start-screen').style.display = 'none'; document.getElementById('quiz').style.display = 'block'; renderQuestion(); }
 
-    function updateQuestion() {
-        document.getElementById('current-idx').innerText = currentIdx + 1;
-        document.getElementById('question-text').innerText = questions[currentIdx];
-    }
-
-    function answer(isYes) {
-        if (isYes) score += 10;
-        currentIdx++;
-        if (currentIdx < questions.length) {
-            updateQuestion();
-        } else {
-            showResult();
+    function renderQuestion() {
+        const q = quizData[current];
+        const area = document.getElementById('q-content');
+        document.getElementById('current-step').innerText = String(current + 1).padStart(2, '0');
+        area.innerHTML = `<div style="font-size:1.3rem; font-weight:900; margin-bottom:25px;">${q.q}</div>`;
+        if (q.type === "choice") {
+            q.c.forEach((choice, i) => { area.innerHTML += `<button style="background:#fff; color:#666; padding:16px; margin-bottom:10px; text-align:left; border:1px solid #eee;" onclick="next(${q.s[i]})">${choice}</button>`; });
+        } else if (q.type === "dual") {
+            area.innerHTML += `<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"><button class="btn-gradient" onclick="next(${q.s || 0})">はい</button><button style="background:#fff; color:#aaa; border:1px solid #eee; border-radius:30px;" onclick="next(${q.ns || 0})">いいえ</button></div>`;
+        } else if (q.type === "slider") {
+            area.innerHTML += `<input type="range" id="sd" min="0" max="100" value="50" oninput="document.getElementById('sv').innerText = this.value + '%'"><div id="sv" style="font-size:3rem; font-weight:900; color:var(--soft-pink); margin-bottom:20px;">50%</div><button class="btn-gradient" onclick="nextSlider()">確定</button>`;
         }
     }
+
+    function next(pts) {
+        score += pts; current++;
+        if (current < quizData.length) { renderQuestion(); } 
+        else { document.getElementById('quiz').style.display = 'none'; document.getElementById('loading').style.display = 'block'; setTimeout(showResult, 2000); }
+    }
+
+    function nextSlider() { score += (document.getElementById('sd').value / 5); next(0); }
 
     function showResult() {
-        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('loading').style.display = 'none';
         document.getElementById('result').style.display = 'block';
-        document.getElementById('score-val').innerText = score;
-
-        let rank = "";
-        let advice = "";
-
-        if (score >= 80) {
-            rank = "【限界】量産おじさん女子💀";
-            advice = "投稿がとにかくダサい…。今のトレンドは「無加工風」と「シンプル」だよ！思い切ってハイライト整理して、世界観リセットしよ？";
-        } else if (score >= 50) {
-            rank = "【微ダサ】意識すぎJK☁️";
-            advice = "映えようとして必死感が出ちゃってるかも。もっと適当に撮った風のほうがオシャレに見えるよ！伸びしろしかないから頑張れ！";
-        } else if (score >= 20) {
-            rank = "【平均】ふつーにオシャレ✨";
-            advice = "いい感じ！でも、みんなと同じすぎて埋もれてるかも。自分だけの「系統」を見つけたらもっと人気が出るはず！";
-        } else {
-            rank = "【神】圧倒的センス担当";
-            advice = "引き算が神。今のインスタを完全に理解してるセンスの塊だよ。むしろアドバイスしてほしいレベル！そのまま突き抜けて。";
-        }
-
-        document.getElementById('rank-text').innerText = rank;
-        document.getElementById('advice-text').innerText = advice;
-    }
-
-    function resetQuiz() {
-        currentIdx = 0;
-        score = 0;
-        document.getElementById('result').style.display = 'none';
-        document.getElementById('start-screen').style.display = 'block';
-        window.scrollTo(0, 0);
-    }
-
-    function shareX() {
-        const text = `【ダサスタ診断】私のダサさは【${score}%】でした！\nランク：${document.getElementById('rank-text').innerText}\n\nみんなもやってみて👇\n@da3asu7agram #ダサスタ診断`;
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
-    }
-
-    function goToLine() {
-        window.open('https://line.me/R/ti/p/@208yikuw', '_blank');
+        let rank, hen, s1, s2, s3, match;
+        if (score >= 200) { rank = "量産おじさん女子💀"; hen = 34; s1 = 12; s2 = 95; s3 = 10; match = "メガネ系男子"; }
+        else if (score >= 130) { rank = "自意識高すぎJK☁️"; hen = 47; s1 = 42; s2 = 78; s3 = 45; match = "スポーツ系男子"; }
+        else if (score >= 70) { rank = "ふつーにオシャレ✨"; hen = 64; s1 = 78; s2 = 28; s3 = 82; match = "高校生モデル"; }
+        else { rank = "圧倒的センス担当💎"; hen = 82; s1 = 98; s2 = 4; s3 = 99; match = "若手俳優"; }
+        
+        document.getElementById('hen-val').innerText = hen;
+        document.getElementById('rank-tag').innerText = rank;
+        document.getElementById('match-val').innerText = match;
+        document.getElementById('circle-path').setAttribute('stroke-dasharray', `${hen}, 100`);
+        
+        // 0.1秒待ってからバーを伸ばすアニメーション（確実に見せるため）
+        setTimeout(() => {
+            document.getElementById('br-1').style.width = s1 + "%"; document.getElementById('lb-1').innerText = s1 + "%";
+            document.getElementById('br-2').style.width = s2 + "%"; document.getElementById('lb-2').innerText = s2 + "%";
+            document.getElementById('br-3').style.width = s3 + "%"; document.getElementById('lb-3').innerText = s3 + "%";
+        }, 100);
     }
 </script>
-
 </body>
-</html>
